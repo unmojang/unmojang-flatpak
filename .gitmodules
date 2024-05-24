@@ -1,0 +1,3 @@
+[submodule "org.unmojang.FjordLauncher"]
+	path = org.unmojang.FjordLauncher
+	url = https://github.com/unmojang/org.unmojang.FjordLauncher

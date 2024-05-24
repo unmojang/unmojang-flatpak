@@ -1,0 +1,74 @@
+name: Flatter
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  flatter:
+    name: Flatter
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/andyholmes/flatter/gnome:44
+      options: --privileged
+
+    strategy:
+      matrix:
+        arch: [x86_64, aarch64]
+      fail-fast: false
+      # Only one job at a time can use the shared repository cache
+      max-parallel: 1
+
+    steps:
+      # Checkout a repository with Flatpak manifests
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: 'recursive'
+
+      # See "Multiple Architectures" below
+      - name: Setup QEMU
+        if: ${{ matrix.arch == 'aarch64' }}
+        id: qemu
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+
+      - name: Install Flatpak dependencies
+        run: |
+          flatpak install --noninteractive org.freedesktop.Sdk.Extension.openjdk21/${{ matrix.arch }}/23.08
+          flatpak install --noninteractive org.freedesktop.Sdk.Extension.openjdk17/${{ matrix.arch }}/23.08
+          flatpak install --noninteractive org.freedesktop.Sdk.Extension.openjdk8/${{ matrix.arch }}/23.08
+          flatpak install --noninteractive org.kde.Sdk/${{ matrix.arch }}/6.7
+          flatpak install --noninteractive org.kde.Platform/${{ matrix.arch }}/6.7
+
+      - name: Build
+        uses: andyholmes/flatter@main
+        with:
+          files: |
+            org.unmojang.FjordLauncher/org.unmojang.FjordLauncher.yml
+          arch: ${{ matrix.arch }}
+          gpg-sign: ${{ steps.gpg.outputs.fingerprint }}
+          upload-bundles: true
+          upload-pages-artifact: ${{ matrix.arch == 'x86_64' }}
+          upload-pages-includes: |
+            index.html
+
+  # See "Github Pages" below
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: flatter
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
