@@ -45,9 +45,9 @@ jobs:
 
       - name: Install Flatpak dependencies
         run: |
-          flatpak install --noninteractive org.freedesktop.Sdk.Extension.openjdk21/${{ matrix.arch }}/23.08
-          flatpak install --noninteractive org.freedesktop.Sdk.Extension.openjdk17/${{ matrix.arch }}/23.08
-          flatpak install --noninteractive org.freedesktop.Sdk.Extension.openjdk8/${{ matrix.arch }}/23.08
+          flatpak install --noninteractive org.freedesktop.Sdk.Extension.openjdk21/${{ matrix.arch }}/24.08
+          flatpak install --noninteractive org.freedesktop.Sdk.Extension.openjdk17/${{ matrix.arch }}/24.08
+          flatpak install --noninteractive org.freedesktop.Sdk.Extension.openjdk8/${{ matrix.arch }}/24.08
           flatpak install --noninteractive org.kde.Sdk/${{ matrix.arch }}/6.8
           flatpak install --noninteractive org.kde.Platform/${{ matrix.arch }}/6.8
 
