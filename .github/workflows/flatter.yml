@@ -9,17 +9,22 @@ on:
 jobs:
   flatter:
     name: Flatter
-    runs-on: ubuntu-latest
     container:
       image: ghcr.io/andyholmes/flatter/gnome:master
       options: --privileged
 
     strategy:
       matrix:
-        arch: [x86_64, aarch64]
+        include:
+          - arch: x86_64
+            runner: ubuntu-latest
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
       fail-fast: false
       # Only one job at a time can use the shared repository cache
       max-parallel: 1
+
+    runs-on: ${{ matrix.runner }}
 
     steps:
       # Checkout a repository with Flatpak manifests
@@ -34,14 +39,6 @@ jobs:
         with:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.GPG_PASSPHRASE }}
-
-      # See "Multiple Architectures" below
-      - name: Setup QEMU
-        if: ${{ matrix.arch == 'aarch64' }}
-        id: qemu
-        uses: docker/setup-qemu-action@v3
-        with:
-          platforms: arm64
 
       - name: Install Flatpak dependencies
         run: |
