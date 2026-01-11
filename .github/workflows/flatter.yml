@@ -10,7 +10,7 @@ jobs:
   flatter:
     name: Flatter
     container:
-      image: ghcr.io/andyholmes/flatter/gnome:master
+      image: ghcr.io/andyholmes/flatter/kde:6.10
       options: --privileged
 
     strategy:
