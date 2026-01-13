@@ -12,6 +12,8 @@ jobs:
     container:
       image: ghcr.io/andyholmes/flatter/kde:6.10
       options: --privileged
+      volumes:
+        - /opt/hostedtoolcache:/hostedtoolcache
 
     strategy:
       matrix:
@@ -27,17 +29,10 @@ jobs:
     runs-on: ${{ matrix.runner }}
 
     steps:
-      - name: Maximize build space
+      - name: Free up disk space
+        shell: bash
         run: |
-          echo "-- Dotnet"
-          sudo rm -rf /usr/share/dotnet
-          echo "-- Android"
-          sudo rm -rf /usr/local/lib/android
-          echo "-- Haskell"
-          sudo rm -rf /opt/ghc
-          echo "-- CodeQL"
-          sudo rm -rf /opt/hostedtoolcache/CodeQL
-
+          rm -rf /hostedtoolcache/*
           df -h
 
       # Checkout a repository with Flatpak manifests
