@@ -112,7 +112,9 @@ jobs:
             echo 'Name=org.unmojang.FjordLauncher'
             echo 'Branch=master'
             echo "Url=${URL}"
+            echo 'RuntimeRepo=https://dl.flathub.org/repo/flathub.flatpakrepo'
             echo 'Homepage=https://github.com/unmojang/FjordLauncher'
+            echo 'Icon=https://raw.githubusercontent.com/unmojang/FjordLauncher/develop/program_info/org.unmojang.FjordLauncher.svg'
             echo "GPGKey=${GPGKEY}"
             echo 'IsRuntime=false'
           } > repo/org.unmojang.FjordLauncher.flatpakref
